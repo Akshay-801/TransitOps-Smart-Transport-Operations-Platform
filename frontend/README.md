@@ -1,12 +1,56 @@
-# React + Vite
+# TransitOps Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend interface for the TransitOps Smart Transport Operations Platform, built using React, Vite, and modern web technologies.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Core:** [React 19](https://react.dev/) & [Vite 7](https://vite.dev/)
+- **Routing:** [React Router v7](https://reactrouter.com/)
+- **State Management & Data Fetching:** [React Query v5 (TanStack Query)](https://tanstack.com/query/latest)
+- **HTTP Client:** [Axios](https://axios-http.com/)
+- **Form Handling & Validation:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
+- **Notifications:** [React Hot Toast](https://react-hot-toast.com/)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+### Prerequisites
+
+Ensure you have [Node.js](https://nodejs.org/) installed (LTS version recommended).
+
+### Installation
+
+1. Navigate to the frontend directory from the project root:
+   ```bash
+   cd frontend
+   ```
+
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+---
+
+## Available Scripts
+
+In the frontend directory, you can run the following commands:
+
+### `npm run dev`
+
+Runs the app in development mode with Hot Module Replacement (HMR).  
+Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
+
+### `npm run build`
+
+Builds the production-ready application to the `dist` folder.  
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+### `npm run preview`
+
+Locally previews the production build created by `npm run build`.
+
+### `npm run lint`
+
+Lints the codebase using ESLint to identify code quality issues and style violations.
