@@ -12,8 +12,8 @@ const generateRecordHash = (data) => {
     hash = (hash << 5) - hash + str.charCodeAt(i);
     hash |= 0;
   }
-  return '0x' + Math.abs(hash).toString(16).toUpperCase().padStart(8, '0') + 
-         Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0');
+  return '0x' + Math.abs(hash).toString(16).toUpperCase().padStart(8, '0') +
+    Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase().padStart(8, '0');
 };
 
 const INITIAL_VEHICLES = [];
@@ -35,9 +35,9 @@ const mapVehicleFromApi = (v) => ({
   currentOdometer: v.odometer || 0,
   acquisitionCost: v.acquisitionCost,
   status: v.status === 'AVAILABLE' ? 'Available' :
-          v.status === 'ON_TRIP' ? 'On Trip' :
-          v.status === 'IN_SHOP' ? 'In Shop' :
-          v.status === 'RETIRED' ? 'Retired' : v.status,
+    v.status === 'ON_TRIP' ? 'On Trip' :
+      v.status === 'IN_SHOP' ? 'In Shop' :
+        v.status === 'RETIRED' ? 'Retired' : v.status,
   region: v.region,
   healthScore: v.healthScore || 90,
   predictiveAlertFlag: v.predictiveAlertFlag || false,
@@ -53,9 +53,9 @@ const mapDriverFromApi = (d) => ({
   contact: d.contactNumber,
   safetyScore: d.safetyScore || 95,
   status: d.status === 'AVAILABLE' ? 'Available' :
-          d.status === 'ON_TRIP' ? 'On Trip' :
-          d.status === 'OFF_DUTY' ? 'Off Duty' :
-          d.status === 'SUSPENDED' ? 'Suspended' : d.status,
+    d.status === 'ON_TRIP' ? 'On Trip' :
+      d.status === 'OFF_DUTY' ? 'Off Duty' :
+        d.status === 'SUSPENDED' ? 'Suspended' : d.status,
   region: d.region || 'North'
 });
 
@@ -73,9 +73,9 @@ const mapTripFromApi = (t, mappedVehicles = []) => {
     actualDistance: t.actualDistance || 0,
     revenue: t.revenue || Math.round(t.plannedDistance * 3.5),
     status: t.status === 'DRAFT' ? 'Draft' :
-            t.status === 'DISPATCHED' ? 'Dispatched' :
-            t.status === 'COMPLETED' ? 'Completed' :
-            t.status === 'CANCELLED' ? 'Cancelled' : t.status,
+      t.status === 'DISPATCHED' ? 'Dispatched' :
+        t.status === 'COMPLETED' ? 'Completed' :
+          t.status === 'CANCELLED' ? 'Cancelled' : t.status,
     createdAt: t.createdAt,
     completedAt: t.completedAt,
     eta: t.status === 'DISPATCHED' ? 'Calculating...' : t.status === 'DRAFT' ? 'Awaiting vehicle' : '—'
@@ -105,7 +105,7 @@ const mapExpenseFromApi = (exp, mappedVehicles = []) => {
     vehicleReg: veh ? veh.regNumber : (exp.vehicleName || '—'),
     tripId: exp.tripId,
     expenseType: exp.category === 'TOLL' ? 'Tolls' :
-                 exp.category === 'MAINTENANCE' ? 'Maintenance' : 'Other',
+      exp.category === 'MAINTENANCE' ? 'Maintenance' : 'Other',
     amount: exp.amount,
     description: exp.description || '',
     date: exp.expenseDate ? exp.expenseDate.split('T')[0] : (exp.createdAt ? exp.createdAt.split('T')[0] : ''),
@@ -242,13 +242,15 @@ export const FleetProvider = ({ children }) => {
       const payload = {
         registrationNumber: vehicle.regNumber.toUpperCase(),
         name: vehicle.nameModel,
-        vehicleType: vehicle.type,   // backend field is vehicleType, not type
-        type: vehicle.type,
-        maxLoadCapacity: parseFloat(vehicle.maxLoadCapacity),
-        odometer: parseFloat(vehicle.currentOdometer || 0),
-        acquisitionCost: parseFloat(vehicle.acquisitionCost),
-        region: vehicle.region,
-        status: 'AVAILABLE'
+        vehicleType: vehicle.type,
+        maxLoadCapacity: vehicle.maxLoadCapacity,
+        odometer: vehicle.currentOdometer || 0,
+        acquisitionCost: vehicle.acquisitionCost,
+        status: vehicle.status === 'Available' ? 'AVAILABLE' :
+          vehicle.status === 'On Trip' ? 'ON_TRIP' :
+            vehicle.status === 'In Shop' ? 'IN_SHOP' :
+              vehicle.status === 'Retired' ? 'RETIRED' : 'AVAILABLE',
+        region: vehicle.region
       };
       await apiService.vehicles.create(payload);
       await loadDataFromApi();
@@ -428,7 +430,7 @@ export const FleetProvider = ({ children }) => {
 
     if (litersConsumed > 0) {
       const isAnomaly = (fuelCost / litersConsumed) > 3.0;
-      
+
       const newFuelLog = {
         id: fuelLogs.length + 1,
         vehicleReg: trip.vehicleReg,
@@ -451,7 +453,7 @@ export const FleetProvider = ({ children }) => {
         isAnomaly,
         date: new Date().toISOString().split('T')[0]
       };
-      
+
       const hash = generateRecordHash(expenseObj);
 
       setExpenses(prev => [...prev, {
@@ -561,8 +563,8 @@ export const FleetProvider = ({ children }) => {
       const payload = {
         vehicleId: vehicle ? vehicle.id : null,
         tripId: null,
-        category: expenseData.expenseType === 'Tolls' ? 'TOLL' : 
-                  expenseData.expenseType === 'Maintenance' ? 'MAINTENANCE' : 'MISC',
+        category: expenseData.expenseType === 'Tolls' ? 'TOLL' :
+          expenseData.expenseType === 'Maintenance' ? 'MAINTENANCE' : 'MISC',
         amount: parseFloat(expenseData.amount),
         expenseDate: new Date().toISOString().split('T')[0],
         description: expenseData.description
