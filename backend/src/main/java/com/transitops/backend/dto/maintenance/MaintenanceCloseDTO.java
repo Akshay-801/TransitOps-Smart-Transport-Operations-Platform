@@ -1,0 +1,21 @@
+package com.transitops.backend.dto.maintenance;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class MaintenanceCloseDTO {
+
+    @NotNull(message = "Maintenance ID is required")
+    private Long maintenanceId;
+
+    private String remarks;
+}
