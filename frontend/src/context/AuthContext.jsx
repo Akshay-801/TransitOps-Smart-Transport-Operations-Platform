@@ -14,8 +14,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        
-        // Check expiration
+
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
           logout();
@@ -23,7 +22,8 @@ export const AuthProvider = ({ children }) => {
           setUser({
             email: decoded.sub,
             name: decoded.name,
-            role: decoded.role
+            role: decoded.role,
+            userId: decoded.userId  // ← real UUID from token, used for trip creation
           });
           setIsAuthenticated(true);
         }
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
         password
       });
 
-      // API Response: { success: true, message: "...", data: { token: "..." } }
+      // Backend response: { success: true, data: { token, userId, name, role } }
       const responseData = response.data;
       if (responseData.success && responseData.data && responseData.data.token) {
         const jwtToken = responseData.data.token;
