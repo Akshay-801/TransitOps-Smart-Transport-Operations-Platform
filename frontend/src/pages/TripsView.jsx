@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { FleetContext } from '../context/FleetContext';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const TripsView = () => {
@@ -12,6 +13,8 @@ const TripsView = () => {
     completeTrip, 
     cancelTrip 
   } = useContext(FleetContext);
+
+  const { user } = useContext(AuthContext);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCompleteModal, setShowCompleteModal] = useState(false);
@@ -125,13 +128,27 @@ const TripsView = () => {
   const availableVehicles = vehicles.filter(v => v.status === 'Available');
   const availableDrivers = drivers.filter(d => d.status === 'Available' && new Date(d.licenseExpiry) >= new Date());
 
+  // Role check permissions
+  const isDispatcher = user?.role === 'DISPATCHER';
+  const isDriver = user?.role === 'DRIVER';
+
+  // Enforce Assigned Only for DRIVER role
+  const displayTrips = isDriver
+    ? trips.filter(trip => {
+        const driver = drivers.find(d => d.id === parseInt(trip.driverId));
+        return driver && driver.name.toLowerCase() === user.name.toLowerCase();
+      })
+    : trips;
+
   return (
     <div className="fade-in">
       <div className="page-title-row">
         <h1 className="page-title">Trip Log & Dispatch</h1>
-        <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
-          ➕ Create Trip
-        </button>
+        {isDispatcher && (
+          <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+            ➕ Create Trip
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -150,7 +167,7 @@ const TripsView = () => {
             </tr>
           </thead>
           <tbody>
-            {trips.map((trip) => {
+            {displayTrips.map((trip) => {
               const driver = drivers.find(d => d.id === parseInt(trip.driverId));
               return (
                 <tr key={trip.id}>
@@ -170,7 +187,7 @@ const TripsView = () => {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      {trip.status === 'Draft' && (
+                      {trip.status === 'Draft' && isDispatcher && (
                         <button className="btn btn-success" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleDispatch(trip.id)}>
                           🚀 Dispatch
                         </button>
@@ -180,9 +197,11 @@ const TripsView = () => {
                           <button className="btn btn-primary" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleOpenCompleteModal(trip.id)}>
                             🏁 Complete
                           </button>
-                          <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleCancel(trip.id)}>
-                            🛑 Cancel
-                          </button>
+                          {isDispatcher && (
+                            <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleCancel(trip.id)}>
+                              🛑 Cancel
+                            </button>
+                          )}
                         </>
                       )}
                       {trip.status === 'Completed' && (

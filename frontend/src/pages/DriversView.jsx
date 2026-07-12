@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { FleetContext } from '../context/FleetContext';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const DriversView = () => {
   const { drivers, addDriver } = useContext(FleetContext);
+  const { user } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
 
   // Form State
@@ -61,13 +63,24 @@ const DriversView = () => {
     setStatus('Available');
   };
 
+  // Enforce new matrix permissions
+  const displayDrivers = user?.role === 'DRIVER'
+    ? drivers.filter(d => d.name.toLowerCase() === user.name.toLowerCase())
+    : user?.role === 'DISPATCHER'
+    ? drivers.filter(d => d.status === 'Available')
+    : drivers;
+
+  const canAddDriver = user?.role === 'SAFETY_OFFICER';
+
   return (
     <div className="fade-in">
       <div className="page-title-row">
         <h1 className="page-title">Driver Management</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-          ➕ Add Driver
-        </button>
+        {canAddDriver && (
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            ➕ Add Driver
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -85,7 +98,7 @@ const DriversView = () => {
             </tr>
           </thead>
           <tbody>
-            {drivers.map((d) => {
+            {displayDrivers.map((d) => {
               const expired = isExpired(d.licenseExpiry);
               return (
                 <tr key={d.id}>

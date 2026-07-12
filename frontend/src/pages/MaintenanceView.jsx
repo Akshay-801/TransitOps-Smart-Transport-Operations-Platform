@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { FleetContext } from '../context/FleetContext';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const MaintenanceView = () => {
   const { maintenanceLogs, vehicles, addMaintenance, closeMaintenance } = useContext(FleetContext);
+  const { user } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
 
   // Form State
@@ -62,13 +64,17 @@ const MaintenanceView = () => {
   // Only vehicles that can go in shop: those not already retired and not currently in shop or on trip
   const activeVehicles = vehicles.filter(v => v.status !== 'Retired' && v.status !== 'In Shop' && v.status !== 'On Trip');
 
+  const isManager = user?.role === 'FLEET_MANAGER';
+
   return (
     <div className="fade-in">
       <div className="page-title-row">
         <h1 className="page-title">Maintenance Logistics</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-          🔧 Log Maintenance
-        </button>
+        {isManager && (
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            🔧 Log Maintenance
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -103,13 +109,17 @@ const MaintenanceView = () => {
                 <td>{log.resolvedDate || '—'}</td>
                 <td>
                   {log.isOpen ? (
-                    <button 
-                      className="btn btn-success" 
-                      style={{ padding: '6px 12px', fontSize: '12px' }} 
-                      onClick={() => handleResolve(log.id, log.vehicleReg)}
-                    >
-                      ✓ Resolve
-                    </button>
+                    isManager ? (
+                      <button 
+                        className="btn btn-success" 
+                        style={{ padding: '6px 12px', fontSize: '12px' }} 
+                        onClick={() => handleResolve(log.id, log.vehicleReg)}
+                      >
+                        ✓ Resolve
+                      </button>
+                    ) : (
+                      <span style={{ fontSize: '12px', color: 'var(--accent-warning)', fontWeight: 500 }}>In Progress</span>
+                    )
                   ) : (
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Resolved</span>
                   )}

@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { FleetContext } from '../context/FleetContext';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const ExpensesView = () => {
   const { expenses, vehicles, addCustomExpense } = useContext(FleetContext);
+  const { user } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
 
   // Form State
@@ -49,9 +51,11 @@ const ExpensesView = () => {
           <div style={{ background: 'var(--bg-card)', padding: '10px 20px', border: '1px solid var(--border-color)', borderRadius: '8px', fontSize: '14px', fontWeight: 600 }}>
             Total Outflow: <span style={{ color: 'var(--accent-danger)' }}>${totalExpenseSum.toLocaleString()}</span>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-            💳 Log Expense
-          </button>
+          {user?.role === 'FINANCIAL_ANALYST' && (
+            <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+              💳 Log Expense
+            </button>
+          )}
         </div>
       </div>
 

@@ -1,10 +1,17 @@
 import React, { useContext, useState } from 'react';
 import { FleetContext } from '../context/FleetContext';
+import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 
 const FleetView = () => {
   const { vehicles, addVehicle } = useContext(FleetContext);
+  const { user } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
+
+  // Dispatcher can only read Available vehicles
+  const displayVehicles = user?.role === 'DISPATCHER'
+    ? vehicles.filter(v => v.status === 'Available' || v.status === 'Available')
+    : vehicles;
   
   // Form State
   const [regNumber, setRegNumber] = useState('');
@@ -75,9 +82,11 @@ const FleetView = () => {
     <div className="fade-in">
       <div className="page-title-row">
         <h1 className="page-title">Vehicle Registry</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-          ➕ Add Vehicle
-        </button>
+        {user?.role === 'FLEET_MANAGER' && (
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            ➕ Add Vehicle
+          </button>
+        )}
       </div>
 
       <div className="table-container">
@@ -95,7 +104,7 @@ const FleetView = () => {
             </tr>
           </thead>
           <tbody>
-            {vehicles.map((v) => (
+            {displayVehicles.map((v) => (
               <tr key={v.regNumber}>
                 <td style={{ fontWeight: 600 }}>{v.regNumber}</td>
                 <td>{v.nameModel}</td>
