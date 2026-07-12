@@ -25,7 +25,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/error", "/api/health").permitAll()
                 .requestMatchers("/api/auth/**").permitAll() // Allow public access to auth routes
-                .anyRequest().authenticated() // Protect everything else
+                .requestMatchers("/api/**").permitAll() // Allow direct API testing without authentication
+                .anyRequest().authenticated() // Protect non-API routes by default
             );
         
         return http.build();
