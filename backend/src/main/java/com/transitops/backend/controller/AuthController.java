@@ -55,8 +55,14 @@ public class AuthController {
         if (userOptional.isPresent()) {
             AppUser user = userOptional.get();
             if (passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-                String token = jwtUtil.generateToken(user.getEmail(), user.getName(), user.getRole().name());
-                return ResponseEntity.ok(ApiResponse.success("Login successful!", new AuthResponse(token)));
+                String token = jwtUtil.generateToken(
+                        user.getEmail(),
+                        user.getName(),
+                        user.getRole().name(),
+                        user.getId().toString()
+                );
+                AuthResponse authResponse = new AuthResponse(token, user.getId(), user.getName(), user.getRole().name());
+                return ResponseEntity.ok(ApiResponse.success("Login successful!", authResponse));
             }
         }
 
