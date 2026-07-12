@@ -9,6 +9,7 @@ import com.transitops.backend.service.TripService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TripController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('DISPATCHER') or hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<TripResponseDTO>> createTrip(@Valid @RequestBody TripRequestDTO request) {
         TripResponseDTO trip = tripService.createTrip(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -32,27 +34,31 @@ public class TripController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<TripResponseDTO>> getTrip(@PathVariable UUID id) {
         TripResponseDTO trip = tripService.getTrip(id);
         return ResponseEntity.ok(ApiResponse.success("Trip retrieved successfully", trip));
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<TripResponseDTO>>> getAllTrips(
             @RequestParam(required = false) TripStatus status) {
-        List<TripResponseDTO> trips = status != null ? 
-            tripService.getTripsByStatus(status) : 
+        List<TripResponseDTO> trips = status != null ?
+            tripService.getTripsByStatus(status) :
             tripService.getAllTrips();
         return ResponseEntity.ok(ApiResponse.success("Trips retrieved successfully", trips));
     }
 
     @PostMapping("/{id}/dispatch")
+    @PreAuthorize("hasRole('DISPATCHER') or hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<TripResponseDTO>> dispatchTrip(@PathVariable UUID id) {
         TripResponseDTO trip = tripService.dispatchTrip(id);
         return ResponseEntity.ok(ApiResponse.success("Trip dispatched successfully", trip));
     }
 
     @PostMapping("/{id}/complete")
+    @PreAuthorize("hasRole('DRIVER') or hasRole('DISPATCHER') or hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<TripResponseDTO>> completeTrip(
             @PathVariable UUID id,
             @Valid @RequestBody TripCompleteDTO request) {
@@ -61,6 +67,7 @@ public class TripController {
     }
 
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('DISPATCHER') or hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<Void>> cancelTrip(@PathVariable UUID id) {
         tripService.cancelTrip(id);
         return ResponseEntity.ok(ApiResponse.success("Trip cancelled successfully"));

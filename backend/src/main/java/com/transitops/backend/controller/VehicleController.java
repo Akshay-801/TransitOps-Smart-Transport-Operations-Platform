@@ -9,6 +9,7 @@ import com.transitops.backend.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class VehicleController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<VehicleResponseDTO>> createVehicle(@Valid @RequestBody VehicleRequestDTO request) {
         VehicleResponseDTO vehicle = vehicleService.createVehicle(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -32,21 +34,24 @@ public class VehicleController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<VehicleResponseDTO>> getVehicle(@PathVariable UUID id) {
         VehicleResponseDTO vehicle = vehicleService.getVehicle(id);
         return ResponseEntity.ok(ApiResponse.success("Vehicle retrieved successfully", vehicle));
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<VehicleResponseDTO>>> getAllVehicles(
-            @RequestParam(required = false) VehicleStatus status) {
-        List<VehicleResponseDTO> vehicles = status != null ? 
-            vehicleService.getVehiclesByStatus(status) : 
-            vehicleService.getAllVehicles();
+            @RequestParam(required = false) VehicleStatus status,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String region) {
+        List<VehicleResponseDTO> vehicles = vehicleService.getVehiclesFiltered(status, type, region);
         return ResponseEntity.ok(ApiResponse.success("Vehicles retrieved successfully", vehicles));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<VehicleResponseDTO>> updateVehicle(
             @PathVariable UUID id,
             @Valid @RequestBody VehicleUpdateDTO request) {
@@ -55,6 +60,7 @@ public class VehicleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('FLEET_MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteVehicle(@PathVariable UUID id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.ok(ApiResponse.success("Vehicle deleted successfully"));

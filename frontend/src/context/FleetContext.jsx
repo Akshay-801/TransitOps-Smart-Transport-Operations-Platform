@@ -1,5 +1,6 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { apiService } from '../services/api';
+import { AuthContext } from './AuthContext';
 
 export const FleetContext = createContext();
 
@@ -114,6 +115,7 @@ const mapExpenseFromApi = (exp, mappedVehicles = []) => {
 };
 
 export const FleetProvider = ({ children }) => {
+  const auth = useContext(AuthContext);
   const [isApiOnline, setIsApiOnline] = useState(false);
 
   const [vehicles, setVehicles] = useState(() => {
@@ -240,10 +242,13 @@ export const FleetProvider = ({ children }) => {
       const payload = {
         registrationNumber: vehicle.regNumber.toUpperCase(),
         name: vehicle.nameModel,
+        vehicleType: vehicle.type,   // backend field is vehicleType, not type
         type: vehicle.type,
-        maxLoadCapacity: vehicle.maxLoadCapacity,
-        acquisitionCost: vehicle.acquisitionCost,
-        region: vehicle.region
+        maxLoadCapacity: parseFloat(vehicle.maxLoadCapacity),
+        odometer: parseFloat(vehicle.currentOdometer || 0),
+        acquisitionCost: parseFloat(vehicle.acquisitionCost),
+        region: vehicle.region,
+        status: 'AVAILABLE'
       };
       await apiService.vehicles.create(payload);
       await loadDataFromApi();
@@ -270,11 +275,13 @@ export const FleetProvider = ({ children }) => {
   const addDriver = async (driver) => {
     if (isApiOnline) {
       const payload = {
-        licenseNumber: driver.licenseNumber,
         name: driver.name,
+        licenseNumber: driver.licenseNumber,
         licenseCategory: driver.licenseCategory,
         licenseExpiryDate: driver.licenseExpiry,
-        contactNumber: driver.contact
+        contactNumber: driver.contact,
+        safetyScore: driver.safetyScore || 90,   // required by backend DTO
+        status: 'AVAILABLE'                        // required by backend DTO
       };
       await apiService.drivers.create(payload);
       await loadDataFromApi();
@@ -294,14 +301,17 @@ export const FleetProvider = ({ children }) => {
   const createTrip = async (tripData) => {
     if (isApiOnline) {
       const vehicle = vehicles.find(v => v.regNumber === tripData.vehicleReg);
+      // Use real logged-in user UUID — fixes 500 "User not found" error
+      const createdById = auth?.user?.userId;
+      if (!createdById) throw new Error('User session missing. Please log in again.');
       const payload = {
         vehicleId: vehicle ? vehicle.id : null,
         driverId: tripData.driverId || null,
-        createdById: '770e8400-e29b-41d4-a716-446655440002', // mock Admin
+        createdById: createdById,
         source: tripData.source,
         destination: tripData.destination,
-        cargoWeight: tripData.cargoWeight,
-        plannedDistance: tripData.plannedDistance
+        cargoWeight: parseFloat(tripData.cargoWeight),
+        plannedDistance: parseFloat(tripData.plannedDistance)
       };
       await apiService.trips.create(payload);
       await loadDataFromApi();

@@ -57,6 +57,15 @@ public class VehicleService {
                 .collect(Collectors.toList());
     }
 
+    public List<VehicleResponseDTO> getVehiclesFiltered(VehicleStatus status, String type, String region) {
+        return vehicleRepository.findAll().stream()
+                .filter(v -> status == null || v.getStatus() == status)
+                .filter(v -> type == null || type.isBlank() || type.equalsIgnoreCase(v.getType()))
+                .filter(v -> region == null || region.isBlank() || region.equalsIgnoreCase(v.getRegion()))
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     public VehicleResponseDTO updateVehicle(UUID id, VehicleUpdateDTO request) {
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Vehicle not found with ID: " + id));

@@ -194,14 +194,16 @@ const TripsView = () => {
                       )}
                       {(trip.status === 'Dispatched' || trip.status === 'On Trip') && (
                         <>
-                          <button className="btn btn-primary" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleOpenCompleteModal(trip.id)}>
-                            🏁 Complete
-                          </button>
-                          {isDispatcher && (
-                            <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleCancel(trip.id)}>
-                              🛑 Cancel
-                            </button>
-                          )}
+                           {(isDriver || isDispatcher || user?.role === 'FLEET_MANAGER') && (
+                             <button className="btn btn-primary" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleOpenCompleteModal(trip.id)}>
+                               🏁 Complete
+                             </button>
+                           )}
+                           {isDispatcher && (
+                             <button className="btn btn-danger" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => handleCancel(trip.id)}>
+                               🛑 Cancel
+                             </button>
+                           )}
                         </>
                       )}
                       {trip.status === 'Completed' && (

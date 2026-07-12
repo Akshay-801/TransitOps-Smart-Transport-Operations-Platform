@@ -7,6 +7,7 @@ import com.transitops.backend.service.FuelLogService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class FuelLogController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('DRIVER') or hasRole('FINANCIAL_ANALYST') or hasRole('FLEET_MANAGER') or hasRole('DISPATCHER')")
     public ResponseEntity<ApiResponse<FuelLogResponseDTO>> logFuel(@Valid @RequestBody FuelLogRequestDTO request) {
         FuelLogResponseDTO fuelLog = fuelLogService.logFuel(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -30,12 +32,14 @@ public class FuelLogController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('FINANCIAL_ANALYST') or hasRole('FLEET_MANAGER') or hasRole('DISPATCHER')")
     public ResponseEntity<ApiResponse<FuelLogResponseDTO>> getFuelLog(@PathVariable UUID id) {
         FuelLogResponseDTO fuelLog = fuelLogService.getFuelLog(id);
         return ResponseEntity.ok(ApiResponse.success("Fuel log retrieved successfully", fuelLog));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('FINANCIAL_ANALYST') or hasRole('FLEET_MANAGER') or hasRole('DISPATCHER')")
     public ResponseEntity<ApiResponse<List<FuelLogResponseDTO>>> getAllFuelLogs(
             @RequestParam(required = false) UUID vehicleId) {
         List<FuelLogResponseDTO> fuelLogs = vehicleId != null ? 
@@ -45,6 +49,7 @@ public class FuelLogController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('FINANCIAL_ANALYST')")
     public ResponseEntity<ApiResponse<Void>> deleteFuelLog(@PathVariable UUID id) {
         fuelLogService.deleteFuelLog(id);
         return ResponseEntity.ok(ApiResponse.success("Fuel log deleted successfully"));

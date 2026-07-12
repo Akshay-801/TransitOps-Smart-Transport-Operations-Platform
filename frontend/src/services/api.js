@@ -4,7 +4,7 @@ const API_BASE_URL = 'http://localhost:8080/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 3000,
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -91,6 +91,15 @@ export const apiService = {
     getAll: (vehicleId) => apiClient.get('/expenses', { params: { vehicleId } }),
     create: (data) => apiClient.post('/expenses', data),
     delete: (id) => apiClient.delete(`/expenses/${id}`),
+  },
+
+  // Analytics
+  analytics: {
+    summary: () => apiClient.get('/analytics/summary'),
+    vehicleRoi: () => apiClient.get('/analytics/vehicle-roi'),
+    fuelEfficiency: () => apiClient.get('/analytics/fuel-efficiency'),
+    operationalCost: () => apiClient.get('/analytics/operational-cost'),
+    exportCsv: () => apiClient.get('/analytics/export/csv', { responseType: 'blob' }),
   }
 };
 
