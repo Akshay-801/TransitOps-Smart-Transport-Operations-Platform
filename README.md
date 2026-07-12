@@ -2,12 +2,6 @@
 
 An enterprise-grade, role-based fleet management and transit logistics platform designed to optimize vehicle utilization, automate dispatching workflows, track expenses, and monitor real-time operational efficiency.
 
-> **Project Banner**
-> 
-> ```md
-> ![Project Banner](docs/images/project-banner.png)
-> ```
-
 ---
 
 ## Table of Contents
@@ -160,11 +154,6 @@ graph TD
     Controllers -->|Business Logic| Services[Service Layer]
     Services -->|Spring Data JPA / Transactions| Repos[Repositories]
     Repos -->|SQL queries over JDBC| DB[(PostgreSQL 16 DB)]
-```
-
-### Architecture Image Placeholder
-```md
-![System Architecture](docs/images/system-architecture.png)
 ```
 
 ### Core Workflows
