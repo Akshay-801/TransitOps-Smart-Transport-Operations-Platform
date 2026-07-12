@@ -1,8 +1,11 @@
 package com.transitops.backend.dto.vehicle;
 
+import com.transitops.backend.model.VehicleStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,20 +22,27 @@ import java.math.BigDecimal;
 public class VehicleUpdateDTO {
 
     @NotBlank(message = "Vehicle name is required")
-    private String vehicleName;
+    @Size(max = 100, message = "Vehicle name must be at most 100 characters")
+    private String name;
 
-    @NotBlank(message = "Vehicle type is required")
+    @Size(max = 100, message = "Vehicle type must be at most 100 characters")
     private String vehicleType;
 
+    @NotNull(message = "Maximum load capacity is required")
     @Positive(message = "Maximum load capacity must be positive")
-    private Double maximumLoadCapacity;
+    private java.math.BigDecimal maxLoadCapacity;
 
+    @NotNull(message = "Odometer is required")
     @PositiveOrZero(message = "Odometer reading must be zero or positive")
-    private Double odometer;
+    private java.math.BigDecimal odometer;
 
-    @PositiveOrZero(message = "Acquisition cost must be zero or positive")
+    @NotNull(message = "Acquisition cost is required")
+    @Positive(message = "Acquisition cost must be positive")
     private BigDecimal acquisitionCost;
 
-    @NotBlank(message = "Status is required")
-    private String status;
+    @NotNull(message = "Status is required")
+    private VehicleStatus status;
+
+    @Size(max = 100, message = "Region must be at most 100 characters")
+    private String region;
 }

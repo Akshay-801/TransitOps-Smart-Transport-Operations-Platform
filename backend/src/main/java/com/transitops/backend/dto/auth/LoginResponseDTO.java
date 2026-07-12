@@ -1,10 +1,13 @@
 package com.transitops.backend.dto.auth;
 
+import com.transitops.backend.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,13 +16,13 @@ import lombok.Setter;
 @Builder
 public class LoginResponseDTO {
 
-    private String token;
+    private UUID userId;
 
-    private String refreshToken;
-
-    private String role;
+    private String name;
 
     private String email;
 
-    private String fullName;
+    private Role role;
+
+    private String message;
 }

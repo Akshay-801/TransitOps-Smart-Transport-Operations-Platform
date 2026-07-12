@@ -1,8 +1,10 @@
 package com.transitops.backend.dto.expense;
 
+import com.transitops.backend.model.ExpenseCategory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,12 +23,15 @@ import java.time.LocalDate;
 public class ExpenseRequestDTO {
 
     @NotNull(message = "Vehicle ID is required")
-    private Long vehicleId;
+    private UUID vehicleId;
 
-    @NotBlank(message = "Expense type is required")
-    private String expenseType;
+    private UUID tripId;
+
+    @NotNull(message = "Expense category is required")
+    private ExpenseCategory category;
 
     @NotBlank(message = "Description is required")
+    @Size(max = 1000, message = "Description must be at most 1000 characters")
     private String description;
 
     @NotNull(message = "Amount is required")

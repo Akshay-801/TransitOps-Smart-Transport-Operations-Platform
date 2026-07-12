@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,13 +17,17 @@ import java.time.LocalDate;
 @Builder
 public class FuelLogResponseDTO {
 
-    private Long id;
+    private UUID id;
+
+    private UUID vehicleId;
+
+    private UUID tripId;
 
     private String vehicleName;
 
-    private Double fuelLiters;
+    private BigDecimal liters;
 
-    private BigDecimal fuelCost;
+    private BigDecimal cost;
 
-    private LocalDate fuelDate;
+    private LocalDate logDate;
 }

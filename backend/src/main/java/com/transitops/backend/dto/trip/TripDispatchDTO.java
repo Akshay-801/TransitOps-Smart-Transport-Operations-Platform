@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ import lombok.Setter;
 public class TripDispatchDTO {
 
     @NotNull(message = "Trip ID is required")
-    private Long tripId;
+    private UUID tripId;
 }

@@ -1,5 +1,6 @@
 package com.transitops.backend.dto.expense;
 
+import com.transitops.backend.model.ExpenseCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,11 +18,15 @@ import java.time.LocalDate;
 @Builder
 public class ExpenseResponseDTO {
 
-    private Long id;
+    private UUID id;
+
+    private UUID vehicleId;
+
+    private UUID tripId;
 
     private String vehicleName;
 
-    private String expenseType;
+    private ExpenseCategory category;
 
     private String description;
 

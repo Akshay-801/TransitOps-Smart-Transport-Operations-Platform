@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,18 +20,18 @@ import java.time.LocalDate;
 public class FuelLogRequestDTO {
 
     @NotNull(message = "Vehicle ID is required")
-    private Long vehicleId;
+    private UUID vehicleId;
 
-    private Long tripId;
+    private UUID tripId;
 
     @NotNull(message = "Fuel liters is required")
     @Positive(message = "Fuel liters must be positive")
-    private Double fuelLiters;
+    private BigDecimal liters;
 
     @NotNull(message = "Fuel cost is required")
     @Positive(message = "Fuel cost must be positive")
-    private BigDecimal fuelCost;
+    private BigDecimal cost;
 
     @NotNull(message = "Fuel date is required")
-    private LocalDate fuelDate;
+    private LocalDate logDate;
 }

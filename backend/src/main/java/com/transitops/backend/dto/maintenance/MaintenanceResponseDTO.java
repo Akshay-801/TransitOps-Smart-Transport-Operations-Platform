@@ -1,5 +1,6 @@
 package com.transitops.backend.dto.maintenance;
 
+import com.transitops.backend.model.MaintenanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,17 +18,19 @@ import java.time.LocalDate;
 @Builder
 public class MaintenanceResponseDTO {
 
-    private Long id;
+    private UUID id;
+
+    private UUID vehicleId;
 
     private String vehicleName;
-
-    private String maintenanceType;
 
     private String description;
 
     private BigDecimal cost;
 
-    private String status;
+    private LocalDateTime openedAt;
 
-    private LocalDate scheduledDate;
+    private LocalDateTime closedAt;
+
+    private MaintenanceStatus status;
 }

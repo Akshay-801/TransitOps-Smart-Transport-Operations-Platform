@@ -1,10 +1,14 @@
 package com.transitops.backend.dto.auth;
 
+import com.transitops.backend.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,13 +17,13 @@ import lombok.Setter;
 @Builder
 public class UserResponseDTO {
 
-    private Long id;
+    private UUID id;
 
-    private String fullName;
+    private String name;
 
     private String email;
 
-    private String role;
+    private Role role;
 
-    private Boolean enabled;
+    private LocalDateTime createdAt;
 }

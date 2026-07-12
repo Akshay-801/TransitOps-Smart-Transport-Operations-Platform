@@ -1,5 +1,6 @@
 package com.transitops.backend.dto.vehicle;
 
+import com.transitops.backend.model.VehicleStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,19 +17,21 @@ import java.math.BigDecimal;
 @Builder
 public class VehicleResponseDTO {
 
-    private Long id;
+    private UUID id;
 
     private String registrationNumber;
 
-    private String vehicleName;
+    private String name;
 
     private String vehicleType;
 
-    private Double maximumLoadCapacity;
+    private BigDecimal maxLoadCapacity;
 
-    private Double odometer;
+    private BigDecimal odometer;
 
     private BigDecimal acquisitionCost;
 
-    private String status;
+    private VehicleStatus status;
+
+    private String region;
 }

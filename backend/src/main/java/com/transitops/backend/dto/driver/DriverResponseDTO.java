@@ -1,5 +1,6 @@
 package com.transitops.backend.dto.driver;
 
+import com.transitops.backend.model.DriverStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -15,7 +17,7 @@ import java.time.LocalDate;
 @Builder
 public class DriverResponseDTO {
 
-    private Long id;
+    private UUID id;
 
     private String name;
 
@@ -27,7 +29,9 @@ public class DriverResponseDTO {
 
     private String contactNumber;
 
-    private Double safetyScore;
+    private Integer safetyScore;
 
-    private String status;
+    private DriverStatus status;
+
+    private UUID userId;
 }
